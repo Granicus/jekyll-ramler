@@ -1,18 +1,18 @@
 require 'json'
 
 module Jekyll
-  class RawPage<Page
+  class RawFile<StaticFile
     def initialize(site, base, dir, name, content)
-      @site = site
-      @base = base
-      @dir = dir
-      @name = name 
+      @content = content
+      super(site, base, dir, name)
+    end
 
-
-      self.process(@name)
-      self.read_yaml(File.join(base, '_layouts'), 'raw.html')
-
-      self.data['body'] = content
+    def write(dest)
+      dest_path = File.join(dest, @dir, @name)
+      FileUtils.mkdir_p(File.dirname(dest_path))
+      File.open(dest_path, 'w') do |f|
+        f.write(@content)
+      end
     end
   end
 
@@ -238,7 +238,7 @@ module Jekyll
       raml_download_filename = raml_download_path.delete_at(-1)
       raml_download_path = raml_download_path.join('/') + '/'
 
-      @site.pages << RawPage.new(@site, @site.source, raml_download_path, raml_download_filename, raml_hash.to_yaml)
+      @site.static_files << RawFile.new(@site, @site.source, raml_download_path, raml_download_filename, raml_hash.to_yaml)
     end
 
     private
