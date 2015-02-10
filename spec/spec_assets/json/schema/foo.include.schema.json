@@ -1,0 +1,7 @@
+{
+    "foo": {
+    "description": "Fooing",
+    "type": "string",
+    "example": "Foo"
+  }
+}
