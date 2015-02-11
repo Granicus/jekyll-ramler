@@ -1,0 +1,25 @@
+#%RAML 0.8
+title: Test!
+/test_resource:
+  post:
+    description: An example of a schema with no inheritance
+    body:
+      application/x-www-form-urlencoded:
+        formParameters:
+          foo:
+            description: Fooing
+            type: string
+            example:  Foo
+          bar:
+            description: A place to get a drink
+            type: string 
+  /nested_test_resource:
+    post:
+      description: An example of a nested resource
+      body:
+        application/x-www-form-urlencoded:
+          formParameters:
+            stuff:
+              description: Just some junk
+              type: string
+              example: Junk

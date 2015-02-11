@@ -1,12 +1,13 @@
 require 'deep_clone'
+require 'fakefs/spec_helpers'
 require 'jekyll'
 require 'pry'
-require 'rspec'
 require 'rspec/expectations'
 require_relative '../lib/jekyll-ramler.rb'
 
 
 RSpec.configure do |config|
+  config.include FakeFS::SpecHelpers, fakefs:true
 end
 
 def pretty_json(json)
@@ -20,20 +21,22 @@ end
 def example_raml_hash
   raml_hash = {
     'title' => 'Test!',
-    '/test_resource' => {
-      'post' => {
-        'description' => 'An example of a schema with no inheritance',
-        'body' => {
-          'application/x-www-form-urlencoded' => {
-            'formParameters' => {
-              'foo' => {
-                'description' => 'Fooing',
-                'type' => 'string',
-                'example' => 'Foo'
-              },
-              'bar' => {
-                'description' => 'A place to get a drink',
-                'type' => 'object'
+    'resources' => {
+      '/test_resource' => {
+        'post' => {
+          'description' => 'An example of a schema with no inheritance',
+          'body' => {
+            'application/x-www-form-urlencoded' => {
+              'formParameters' => {
+                'foo' => {
+                  'description' => 'Fooing',
+                  'type' => 'string',
+                  'example' => 'Foo'
+                },
+                'bar' => {
+                  'description' => 'A place to get a drink',
+                  'type' => 'object'
+                }
               }
             }
           }
@@ -41,6 +44,10 @@ def example_raml_hash
       }
     }
   }
+end
+
+def load_simple_raml
+  JSON.parse(`raml-cop #{File.join(spec_pwd, 'spec_assets/raml/simple.raml')} -j`)
 end
 
 def simple_schema
@@ -57,6 +64,25 @@ end
 
 def allOf_schema
   pretty_json(File.read(File.join(spec_pwd, 'spec_assets/json/schema/allOf_schema.schema.json')))
+end
+
+def recursive_resource_search(raml_hash, site, parent='')
+  passed = raml_hash['resources'].all? do |resource_hash|
+    site.pages.any? do |page|
+      puts "#{page.data['title']}=?=#{parent}#{resource_hash['relativeUri']}"
+      page.data['title'] == "#{parent}#{resource_hash['relativeUri']}"
+    end
+  end
+
+  if passed
+    raml_hash['resources'].each do |resource_hash|
+      if resource_hash.include?('resources')
+        passed = recursive_resource_search(resource_hash, site, resource_hash['relativeUri'])
+      end
+    end
+  end
+
+  passed
 end
 
 RSpec::Matchers.define :dereference do |expected_json|

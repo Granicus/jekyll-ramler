@@ -20,6 +20,7 @@ GEM
     colorator (0.1)
     diff-lcs (1.2.5)
     execjs (2.3.0)
+    fakefs (0.6.5)
     fast-stemmer (1.0.2)
     ffi (1.9.6)
     hitimes (1.2.2)
@@ -95,6 +96,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  fakefs
   jekyll-ramler!
   pry
   rspec

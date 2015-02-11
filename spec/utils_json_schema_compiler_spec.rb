@@ -13,7 +13,7 @@ describe 'Utils' do
       @raml_hash = @jsc.compile(@raml_hash)
       expect(@raml_hash).to eq orig_raml_hash
       
-      @raml_hash['/test_resource']['post']['body']['application/json'] = {
+      @raml_hash['resources']['/test_resource']['post']['body']['application/json'] = {
         'example' => "{ 'bar' => {} }"
       }
       orig_raml_hash = DeepClone.clone @raml_hash
@@ -22,7 +22,7 @@ describe 'Utils' do
     end
 
     it 'does not modify an object with a schema item for application/json that does not include $ref or allOf' do
-      @raml_hash['/test_resource']['post']['body']['application/json'] = {
+      @raml_hash['resources']['/test_resource']['post']['body']['application/json'] = {
         'schema' => simple_schema
       }
       orig_raml_hash = DeepClone.clone @raml_hash
@@ -32,15 +32,15 @@ describe 'Utils' do
 
 
     it 'replaces $ref items in application/json schema with the referred to content' do
-      @raml_hash['/test_resource']['post']['body']['application/json'] = {
+      @raml_hash['resources']['/test_resource']['post']['body']['application/json'] = {
         'schema' => ref_schema
       }
       orig_raml_hash = DeepClone.clone @raml_hash
 
       @raml_hash = @jsc.compile(@raml_hash)
-      orig_schema = orig_raml_hash['/test_resource']['post']['body']['application/json'].delete('schema')
+      orig_schema = orig_raml_hash['resources']['/test_resource']['post']['body']['application/json'].delete('schema')
       orig_schema = JSON.parse(orig_schema)
-      new_schema = @raml_hash['/test_resource']['post']['body']['application/json'].delete('schema')
+      new_schema = @raml_hash['resources']['/test_resource']['post']['body']['application/json'].delete('schema')
       new_schema = JSON.parse(new_schema)
 
       # The rest of the raml object should be identical
@@ -58,15 +58,15 @@ describe 'Utils' do
     end
 
     it 'merges allOf items into the parent object in application/json schema items' do
-      @raml_hash['/test_resource']['post']['body']['application/json'] = {
+      @raml_hash['resources']['/test_resource']['post']['body']['application/json'] = {
         'schema' => allOf_schema
       }
       orig_raml_hash = DeepClone.clone @raml_hash
 
       @raml_hash = @jsc.compile(@raml_hash)
-      orig_schema = orig_raml_hash['/test_resource']['post']['body']['application/json'].delete('schema')
+      orig_schema = orig_raml_hash['resources']['/test_resource']['post']['body']['application/json'].delete('schema')
       orig_schema = JSON.parse(orig_schema)
-      new_schema = @raml_hash['/test_resource']['post']['body']['application/json'].delete('schema')
+      new_schema = @raml_hash['resources']['/test_resource']['post']['body']['application/json'].delete('schema')
       new_schema = JSON.parse(new_schema)
 
       # The rest of the raml object should be identical
