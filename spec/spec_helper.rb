@@ -1,5 +1,6 @@
 require 'deep_clone'
 require 'jekyll'
+require 'pry'
 require 'rspec'
 require 'rspec/expectations'
 require_relative '../lib/jekyll-ramler.rb'
@@ -21,17 +22,18 @@ def example_raml_hash
     'title' => 'Test!',
     '/test_resource' => {
       'post' => {
+        'description' => 'An example of a schema with no inheritance',
         'body' => {
           'application/x-www-form-urlencoded' => {
             'formParameters' => {
               'foo' => {
-                'description' => 'Sometimes you just need to foo',
-                'type' => 'string'
+                'description' => 'Fooing',
+                'type' => 'string',
+                'example' => 'Foo'
               },
               'bar' => {
-                'description' => 'Where you get a drink',
-                'type' => 'object',
-                'required' => 'true'
+                'description' => 'A place to get a drink',
+                'type' => 'object'
               }
             }
           }

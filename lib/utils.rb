@@ -43,7 +43,7 @@ module Jekyll
         if obj.include?('body')
           if obj['body'].fetch('application/x-www-form-urlencoded', {}).include?('formParameters')
             if obj['body'].include?('application/json') && !(obj['body']['application/json'].include?('schema'))
-              insert_json_schema(obj)
+              insert_json_schema(obj, generate_json_schema(obj))
             end
           end
         end
@@ -52,10 +52,9 @@ module Jekyll
       obj
     end
 
-    # Inserts JSON Schema into obj['body']['application/json']['schema'] based on 
-    # obj['body']['application/x-www-form-urlencoded']['formParameters'] 
-    def insert_json_schema(obj)
-      obj['body']['application/json']['schema'] = generate_json_schema(obj)
+    # Inserts provided JSON Schema into obj['body']['application/json']['schema'] 
+    def insert_json_schema(obj, schema)
+      obj['body']['application/json']['schema'] = schema 
     end
 
     # Creates JSON Schema - as a string - based on obj['body']['application/x-www-form-urlencoded']['formParameters'] 
@@ -66,6 +65,7 @@ module Jekyll
       schema_hash['$schema'] = @site.config['json_schema_schema_uri']
       schema_hash['title'] = @title if @title
       schema_hash['description'] = Jekyll::sanatize_json_string(obj['description']) if obj.include?('description')
+      schema_hash['type'] = 'object'
 
       required_properties = []
       schema_hash['properties'] = obj['body']['application/x-www-form-urlencoded']['formParameters'].dup
