@@ -1,12 +1,10 @@
 require_relative './spec_helper.rb'
 
-spec_pwd = File.dirname(__FILE__)
-
 describe 'Utils' do
   context 'RAML Schema Generator' do
 
     context '.generate_json_schema' do
-      it 'creates a JSON Schema string that includes all properties from ' 
+      it 'creates a JSON Schema string that includes all properties from application/x-www-form-urlencoded:formParameters' 
     end
 
     context '.insert_json_schema' do

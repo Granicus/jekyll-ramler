@@ -1,48 +1,13 @@
 require_relative './spec_helper.rb'
 
-spec_pwd = File.dirname(__FILE__)
-
 describe 'Utils' do
   context 'JSON Schema Compiler' do
 
-    let(:simple_schema) do 
-      pretty_json(File.read(File.join(spec_pwd, 'spec_assets/json/schema/simple_schema.schema.json')))
-    end
-    let(:ref_schema) do
-      pretty_json(File.read(File.join(spec_pwd, 'spec_assets/json/schema/ref_schema.schema.json')))
-    end
-    let(:foo_bit) do
-      pretty_json(File.read(File.join(spec_pwd, 'spec_assets/json/schema/foo.include.schema.json')))
-    end
-    let(:allOf_schema) do
-      pretty_json(File.read(File.join(spec_pwd, 'spec_assets/json/schema/allOf_schema.schema.json')))
-    end
-
     before(:each) do
       @jsc = Jekyll::JsonSchemaCompiler.new
-      @raml_hash = {
-        'title' => 'Test!',
-        '/test_resource' => {
-          'post' => {
-            'body' => {
-              'application/x-www-form-urlencoded' => {
-                'formParameters' => {
-                  'foo' => {
-                    'description' => 'Sometimes you just need to foo',
-                    'type' => 'string'
-                  },
-                  'bar' => {
-                    'description' => 'Where you get a drink',
-                    'type' => 'object',
-                    'required' => 'true'
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      @raml_hash = example_raml_hash
     end
+
     it 'does not modify an object that does not include a schema item for application/json' do
       orig_raml_hash = DeepClone.clone @raml_hash
       @raml_hash = @jsc.compile(@raml_hash)
