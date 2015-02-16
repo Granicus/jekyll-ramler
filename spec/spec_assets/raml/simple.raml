@@ -1,8 +1,56 @@
 #%RAML 0.8
 title: Test!
+documentation:
+  - title: Some Test Content
+    content: |
+      **Hello** and welcome to test content!
+
+      # Very Important Heading
+
+      This is all great!
+securitySchemes:
+  - "Super Security":
+      description: |
+        This is a description of the super secure system we employ to secure our
+        *secured* api.
+      type: x-{other}
+      describedBy:
+        headers:
+          X-SUPER-SECURE:
+            description: Super Secure auth token
+            type: string
+            required: true
+        queryParameters:
+          auth:
+        responses:
+          401:
+            body:
+              application/json:
+                example: |
+                  {
+                    "error": "Whatcha doin' here?"
+                  }
+  - "More Security":
+      description: |
+        This is a description of some more security we employ to secure our
+        *secured* api.
+      type: x-{other}
+traits:
+  - teapot:
+      usage: Used to test traits
+      responses: 
+        418:
+          body:
+            application/json:
+              example: |
+                {
+                  "status": "I'm a teapot"
+                }
 /test_resource:
   post:
     description: An example of a schema with no inheritance
+    is: [teapot]
+    securedBy: ["Super Security"]
     body:
       application/x-www-form-urlencoded:
         formParameters:

@@ -69,7 +69,6 @@ end
 def recursive_resource_search(raml_hash, site, parent='')
   passed = raml_hash['resources'].all? do |resource_hash|
     site.pages.any? do |page|
-      puts "#{page.data['title']}=?=#{parent}#{resource_hash['relativeUri']}"
       page.data['title'] == "#{parent}#{resource_hash['relativeUri']}"
     end
   end
@@ -83,6 +82,24 @@ def recursive_resource_search(raml_hash, site, parent='')
   end
 
   passed
+end
+
+def documentation_search(raml_hash, site)
+  raml_hash['documentation'].all? do |resource_hash|
+    site.pages.any? do |page|
+      page.data['title'] == resource_hash['title']
+    end
+  end
+end
+
+def security_search(raml_hash, site)
+  raml_hash['securitySchemes'].all? do |security_hash|
+    security_hash.all? do |name, hash|
+      site.pages.any? do |page|
+        page.data['title'] == name  
+      end
+    end
+  end
 end
 
 RSpec::Matchers.define :dereference do |expected_json|

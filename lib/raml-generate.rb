@@ -209,8 +209,8 @@ module Jekyll
       if raml_hash.has_key?('securitySchemes')
         raml_hash['securitySchemes'].each do |obj| 
           obj.each_pair do |k, v| 
-            v['describedBy']['headers'].each_pair{ |hn, hv| hv['displayName'] = hn if not hv.nil?}
-            v['describedBy']['queryParameters'].each_pair{ |hn, hv| hv['displayName'] = hn if not hv.nil?}
+            v.fetch('describedBy', {}).fetch('headers', {}).each_pair{ |hn, hv| hv['displayName'] = hn if not hv.nil?}
+            v.fetch('describedBy', {}).fetch('queryParameters', {}).each_pair{ |hn, hv| hv['displayName'] = hn if not hv.nil?}
             @securitySchemes[k] = v
           end
         end
@@ -238,7 +238,9 @@ module Jekyll
       raml_download_filename = raml_download_path.delete_at(-1)
       raml_download_path = raml_download_path.join('/') + '/'
 
-      @site.static_files << RawFile.new(@site, @site.source, raml_download_path, raml_download_filename, raml_hash.to_yaml)
+      raml_yaml = raml_hash.to_yaml
+      raml_yaml.sub!('---', '#%RAML 0.8')
+      @site.static_files << RawFile.new(@site, @site.source, raml_download_path, raml_download_filename, raml_yaml)
     end
 
     private
