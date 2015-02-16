@@ -3,4 +3,7 @@ rvm:
   - 1.9.3-p547
   - 2.1.5
   - 2.2.0
+install:
+  - npm install raml-cop
+  - bundle install
 script: "bundle exec rspec"
