@@ -17,6 +17,55 @@ Node.js script, to actually parse a RAML file. Thus, you will need to install
 [Node.js](http://nodejs.org/), then perform `npm install raml-cop`.
 
 
+## Configuration
+
+Several options can be defined by your project's _config.yml:
+
+- **ramler_paths**
+
+  A nested mapping of the files that jekyll-ramler should read while generating
+  content and the web folders where that content should be placed. *Keys* are
+  the file system paths (relative to your project's root directory) of the
+  files to be read. *Values* are the web paths (relative to web root) to place
+  all content generated based on the read file into. Keys must end with a 
+  forward slash. 
+
+  At this time, only JSON representations of RAML can be read.
+
+  Example:
+
+  ```
+    ramler_paths:
+      ramls/api_v1.json: /an_api/v1/
+      ramls/api_v2.json: /an_api/v2/
+      ramls/api_v3.json: /an_api/
+      ramls/api_v3.json: /an_api/v3/
+      experimental/foo.json: /unstable/
+      ramls/popular.json: /
+  ```
+
+- **ramler_generated_sub_dirs**
+
+  A nested map defining the web sub directories that jekyll-ramler will place
+  generated pages into. Can have three mappings:
+
+  - *resource* - web sub directory for resource pages. Defaults to `resource`.
+  - *overview* - web sub directory for overview pages. Defaults to `overview`.
+  - *security* - web sub directory for security pages. Defaults to `security`.
+
+  Example:
+
+  ```
+    ramler_generated_sub_dirs:
+      resource: resources_pages
+      overview: general_documentation
+      security: security_information
+  ```
+
+  The same value can be used in multiple mappings. For example, all three
+  mappings could be set to `documentation`.
+
+
 ## JSON Schema Support
 
 jekyll-ramler includes a few features for JSON Schema.
