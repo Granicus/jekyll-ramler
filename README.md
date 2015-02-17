@@ -30,6 +30,10 @@ Several options can be defined by your project's _config.yml:
   all content generated based on the read file into. Keys must end with a 
   forward slash. If no value is provided, web root (/) is used. 
 
+  If *ramler_api_paths* is not defined, jekyll-ramler will default to reading
+  `api.json` from your project's root and placing generated files into web 
+  root.
+
   At this time, only JSON representations of RAML can be read.
 
   Example:

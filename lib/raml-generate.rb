@@ -197,18 +197,16 @@ module Jekyll
     def generate(site)
       @site = site
 
-      raml_js_paths = site.config.fetch('raml_json_file_path', 'api.json')
-      if raml_js_paths.is_a?(Array)
-        raml_js_paths.each { |path| generate_api_pages(path) }
-      else
-        generate_api_pages(raml_js_paths)
+      site.config.fetch('ramler_api_paths', {'api.json' => '/'}).each do |file_path, web_root|
+        web_root = '/' if web_root.nil? or web_root.empty?
+        raise 'raml_api_paths web paths must end with "/"' if web_root[-1] != '/'
+        generate_api_pages(file_path, web_root)
       end
-
     end
 
-    def generate_api_pages(raml_js_path)
-      @web_root = File.basename(raml_js_path).split('.').first
-      raml_js = File.open(raml_js_path).read
+    def generate_api_pages(raml_path, web_root)
+      @web_root = web_root 
+      raml_js = File.open(raml_path).read
       raml_hash = JSON.parse(raml_js)
 
       # BETTER THE DATASTRUCTURES!

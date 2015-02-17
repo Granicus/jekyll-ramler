@@ -40,6 +40,12 @@ describe 'ReferencePageGenerator', fakefs:true do
 
   context 'Configuration' do
 
+    it 'reads "api.json" if no ramler_api_paths is provided' do
+      @site.config.delete('ramler_api_paths')
+      expect(File).to receive(:open).with('api.json').and_return(StringIO.new(JSON.pretty_generate(load_simple_raml)))
+      @rpg.generate(@site)
+    end
+
     it 'reads ramls listed in the ramler_api_paths configuration mapping' do
       expect(File).to receive(:open).with('api.json').and_return(StringIO.new(JSON.pretty_generate(load_simple_raml)))
       expect(File).to receive(:open).with('/productA/api.json').and_return(StringIO.new(JSON.pretty_generate(load_simple_raml)))
