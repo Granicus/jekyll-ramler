@@ -100,4 +100,5 @@ DEPENDENCIES
   jekyll-ramler!
   pry
   rspec
+  rspec-mocks
   ruby_deep_clone

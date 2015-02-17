@@ -3,6 +3,7 @@ require 'fakefs/spec_helpers'
 require 'jekyll'
 require 'pry'
 require 'rspec/expectations'
+require 'rspec/mocks'
 require_relative '../lib/jekyll-ramler.rb'
 
 

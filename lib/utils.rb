@@ -2,7 +2,7 @@ require 'json'
 
 module Jekyll
   def self.get_dir(page_type, config)
-    config.fetch('page_dirs', {}).fetch(page_type, page_type)
+    config.fetch('ramler_generated_sub_dirs', {}).fetch(page_type, page_type)
   end
 
   def self.sanatize_json_string(s)

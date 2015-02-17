@@ -21,21 +21,21 @@ Node.js script, to actually parse a RAML file. Thus, you will need to install
 
 Several options can be defined by your project's _config.yml:
 
-- **ramler_paths**
+- **ramler_api_paths**
 
   A nested mapping of the files that jekyll-ramler should read while generating
   content and the web folders where that content should be placed. *Keys* are
   the file system paths (relative to your project's root directory) of the
   files to be read. *Values* are the web paths (relative to web root) to place
   all content generated based on the read file into. Keys must end with a 
-  forward slash. 
+  forward slash. If no value is provided, web root (/) is used. 
 
   At this time, only JSON representations of RAML can be read.
 
   Example:
 
   ```
-    ramler_paths:
+    ramler_api_paths:
       ramls/api_v1.json: /an_api/v1/
       ramls/api_v2.json: /an_api/v2/
       ramls/api_v3.json: /an_api/
