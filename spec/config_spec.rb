@@ -53,10 +53,28 @@ describe 'ReferencePageGenerator', fakefs:true do
       @rpg.generate(@site)
     end
 
-    it 'places generated content into folders based on the ramler_api_paths configuration mapping'
+    it 'places generated content into folders based on the ramler_api_paths configuration mapping' do
+      # Relying on some default values in this test
+        
+      @site.config['ramler_api_paths'].delete('api.json')
+      @rpg.generate(@site)
+      @site.process
+
+      # Look for files generated from service.json
+      expect(File.file?('_site/api.raml')).to be true
+      expect(File.directory?('_site/resource')).to be true
+
+      # Look for files generated from 
+      expect(File.directory?('_site/productA')).to be true
+      expect(File.file?('_site/productA/api.raml')).to be true
+      expect(File.directory?('_site/productA/resource')).to be true
+    end
+
     it 'defaults to web root for any unconfigured ramls'
     it 'throws an error if ramler_api_paths includes a value without a trailing slash'
     it 'defaults to "resource", "overview", and "security" for generated folders'
-    it 'places generated content into folders based oon ramler_generated_sub_dirs configuration mapping'
+    it 'places generated content into folders based on ramler_generated_sub_dirs configuration mapping'
+    it 'names downloadable descriptors "api.raml" and "api.json" by default'
+    it 'names downloadable descriptors based on ramler_downloadable_basename'
   end
 end
