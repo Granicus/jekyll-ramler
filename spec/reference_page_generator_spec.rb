@@ -113,8 +113,8 @@ describe 'ReferencePageGenerator', fakefs:true do
     it 'creates downloadable RAML and JSON of the API descriptor' do
       @rpg.generate(@site)
       @site.process
-      expect(File.file?(File.join('_site', 'api.raml'))).to be true
-      api_raml = File.read(File.join('_site', 'api.raml'))
+      expect(File.file?(File.join('_site', 'api', 'api.raml'))).to be true
+      api_raml = File.read(File.join('_site', 'api', 'api.raml'))
       expect(api_raml).to start_with "#%RAML 0.8"
 
       expect(File.file?(File.join('_site', 'api.json'))).to be true

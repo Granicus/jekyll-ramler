@@ -17,10 +17,11 @@ module Jekyll
   end
 
   class GeneratedPage<Page
-    def initialize(site, base, dir, item, layout=nil)
+    def initialize(site, base, web_root, dir, item, layout=nil)
       @site = site
       @base = base
       @dir = dir.gsub(/{(\w*)}/, '--\1--').gsub(/\s/, '_')
+      @dir = File.join(web_root, @dir)
       @name = 'index.html'
       
       layout = get_layout(dir) if layout.nil?
@@ -57,14 +58,14 @@ module Jekyll
   end
 
   class SecuritySchemePage<GeneratedPage
-    def initialize(site, base, dir, securityScheme)
-        super(site, base, dir, securityScheme, layout=get_layout('resource', site))
+    def initialize(site, base, web_root, dir, securityScheme)
+        super(site, base, web_root, dir, securityScheme, layout=get_layout('resource', site))
     end
   end
 
   class DocumentationPage<GeneratedPage
-    def initialize(site, base, dir, documentation)
-      super(site, base, dir, documentation)
+    def initialize(site, base, web_root, dir, documentation)
+      super(site, base, web_root, dir, documentation)
 
       output = documentation['content']
       self.data['body'] = transform_md(output)
@@ -72,13 +73,13 @@ module Jekyll
   end
 
   class ResourcePage<GeneratedPage 
-    def initialize(site, base, dir, resource, traits, securitySchemes)
+    def initialize(site, base, web_root, dir, resource, traits, securitySchemes)
       # Sandbox our resource, and do nothing with child resources
       resource = resource.dup
       resource.delete('resources')
 
       resource['title'] = dir.sub('resource', '') if not resource.include?('title')
-      super(site, base, dir, resource)
+      super(site, base, web_root, dir, resource)
 
       # Add security data to the resource
       resource.fetch('methods', []).each do |method|
@@ -196,7 +197,17 @@ module Jekyll
     def generate(site)
       @site = site
 
-      raml_js_path = site.config.fetch('raml_json_file_path', 'api.json')
+      raml_js_paths = site.config.fetch('raml_json_file_path', 'api.json')
+      if raml_js_paths.is_a?(Array)
+        raml_js_paths.each { |path| generate_api_pages(path) }
+      else
+        generate_api_pages(raml_js_paths)
+      end
+
+    end
+
+    def generate_api_pages(raml_js_path)
+      @web_root = File.basename(raml_js_path).split('.').first
       raml_js = File.open(raml_js_path).read
       raml_hash = JSON.parse(raml_js)
 
@@ -225,16 +236,17 @@ module Jekyll
       @securitySchemes.each do |scheme_name, scheme|
         scheme_dir = File.join(dir, scheme_name)
         scheme['title'] = scheme_name
-        @site.pages << SecuritySchemePage.new(@site, @site.source, scheme_dir, scheme) 
+        @site.pages << SecuritySchemePage.new(@site, @site.source, @web_root, scheme_dir, scheme) 
       end
 
       raml_hash.fetch('documentation', []).each do |documentation|
         documentation_dir = File.join(dir, documentation['title'])
-        @site.pages << DocumentationPage.new(@site, @site.source, documentation_dir, documentation)
+        @site.pages << DocumentationPage.new(@site, @site.source, @web_root, documentation_dir, documentation)
       end
 
       # Allow users to download the RAML, which may be modified since it was read
-      raml_download_path = site.config.fetch('raml_download_path', 'api.raml').split('/')
+      raml_download_path = @site.config.fetch('raml_download_path', 'api.raml').split('/')
+      raml_download_path.insert(0, @web_root)
       raml_download_filename = raml_download_path.delete_at(-1)
       raml_download_path = raml_download_path.join('/') + '/'
 
@@ -255,7 +267,7 @@ module Jekyll
         resources.each do |resource|
           resource_name = resource["relativeUri"]
           resource_dir = File.join(dir, resource_name)
-          @site.pages << ResourcePage.new(@site, @site.source, resource_dir, resource, @traits, @securitySchemes)
+          @site.pages << ResourcePage.new(@site, @site.source, @web_root, resource_dir, resource, @traits, @securitySchemes)
           if resource.has_key?('resources')
             generate_resource_pages(resource['resources'], resource_dir)
         end
