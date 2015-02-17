@@ -70,8 +70,24 @@ describe 'ReferencePageGenerator', fakefs:true do
       expect(File.directory?('_site/productA/resource')).to be true
     end
 
-    it 'defaults to web root for any unconfigured ramls'
-    it 'throws an error if ramler_api_paths includes a value without a trailing slash'
+    it 'defaults to web root for any unconfigured ramls' do
+      # Only generate content for api.json, which does not define a web root
+      @site.config['ramler_api_paths'].delete('/productA/api.json')
+      @site.config['ramler_api_paths'].delete('service.json')
+      @rpg.generate(@site)
+      @site.process
+
+      expect(File.file?('_site/api.raml')).to be true
+      expect(File.directory?('_site/resource')).to be true
+    end
+
+    it 'throws an error if ramler_api_paths includes a value without a trailing slash' do
+      @site.config['ramler_api_paths'].delete('/productA/api.json')
+      @site.config['ramler_api_paths'].delete('service.json')
+      @site.config['ramler_api_paths']['api.json'] = 'api/v1'
+      expect {@rpg.generate(@site)}.to raise_error 
+    end
+
     it 'defaults to "resource", "overview", and "security" for generated folders'
     it 'places generated content into folders based on ramler_generated_sub_dirs configuration mapping'
     it 'names downloadable descriptors "api.raml" and "api.json" by default'
