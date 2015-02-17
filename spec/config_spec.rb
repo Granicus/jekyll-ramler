@@ -8,7 +8,7 @@ describe 'ReferencePageGenerator', fakefs:true do
       "json_schema_schema_uri" => "http://json-schema.org/draft-04/schema#",
       "ramler_api_paths" => {
         'api.json' => '',
-        '/productA/api.json' => '/productA/',
+        'productA/api.json' => '/productA/',
         'service.json' => '/'}
     }))
     @rpg = Jekyll::ReferencePageGenerator.new
@@ -48,7 +48,7 @@ describe 'ReferencePageGenerator', fakefs:true do
 
     it 'reads ramls listed in the ramler_api_paths configuration mapping' do
       expect(File).to receive(:open).with('api.json').and_return(StringIO.new(JSON.pretty_generate(load_simple_raml)))
-      expect(File).to receive(:open).with('/productA/api.json').and_return(StringIO.new(JSON.pretty_generate(load_simple_raml)))
+      expect(File).to receive(:open).with('productA/api.json').and_return(StringIO.new(JSON.pretty_generate(load_simple_raml)))
       expect(File).to receive(:open).with('service.json').and_return(StringIO.new(JSON.pretty_generate(load_simple_raml)))
       @rpg.generate(@site)
     end
@@ -117,7 +117,29 @@ describe 'ReferencePageGenerator', fakefs:true do
       expect(File.directory?('_site/productA/auth')).to be true
     end
 
-    it 'names downloadable descriptors "api.raml" and "api.json" by default'
-    it 'names downloadable descriptors based on ramler_downloadable_basename'
+    it 'names downloadable descriptors "api.raml" and "api.json" by default' do
+      @site.config['ramler_api_paths'].delete('service.json')
+      @rpg.generate(@site)
+      @site.process
+
+      expect(File.file?('_site/api.json')).to be true
+      expect(File.file?('_site/api.raml')).to be true
+      expect(File.file?('_site/productA/api.json')).to be true
+      expect(File.file?('_site/productA/api.raml')).to be true
+    end
+
+    it 'names downloadable descriptors based on ramler_downloadable_descriptor_basenames' do
+      @site.config['ramler_api_paths'].delete('service.json')
+      @site.config['ramler_downloadable_descriptor_basenames'] = {
+        'productA/api.json' => 'productA_api'
+      }
+      @rpg.generate(@site)
+      @site.process
+
+      expect(File.file?('_site/api.json')).to be true
+      expect(File.file?('_site/api.raml')).to be true
+      expect(File.file?('_site/productA/productA_api.json')).to be true
+      expect(File.file?('_site/productA/productA_api.raml')).to be true
+    end
   end
 end

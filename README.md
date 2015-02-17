@@ -28,7 +28,10 @@ Several options can be defined by your project's _config.yml:
   the file system paths (relative to your project's root directory) of the
   files to be read. *Values* are the web paths (relative to web root) to place
   all content generated based on the read file into. Keys must end with a 
-  forward slash. If no value is provided, web root (/) is used. 
+  forward slash. If no value is provided, web root (/) is used.
+
+  Behavior is undefined for cases in which jekyll-ramler is configured to 
+  output generated content of multiple source files to the same web path.
 
   If *ramler_api_paths* is not defined, jekyll-ramler will default to reading
   `api.json` from your project's root and placing generated files into web 
@@ -68,6 +71,27 @@ Several options can be defined by your project's _config.yml:
 
   The same value can be used in multiple mappings. For example, all three
   mappings could be set to `documentation`.
+
+- **ramler_downloadable_descriptor_basenames**
+
+  A nested map defining the basename of the generated, downloadable descriptors
+  (RAML and JSON). Format is similar to `ramler_api_paths`, where the *keys*
+  are file system paths of files to be read, while *values* are the basenames 
+  to use for generated descriptors. For example:
+
+  ```
+    ramler_downloadable_descriptor_basenames:
+      ramls/api_v1.json: api_v1
+      experimental/foo.json:  unstable
+  ```
+
+  will lead to the creation of `api_v1.raml`, `api_v1.json`, `unstable.raml`,
+  and `unstable.json` downloadable files.
+
+  If a basename is not defined, `api` is used as a basename. 
+
+  Generated descriptor files will be placed in the web folder configured for a
+  given source file.
 
 
 ## JSON Schema Support

@@ -243,15 +243,17 @@ module Jekyll
         @site.pages << DocumentationPage.new(@site, @site.source, @web_root, documentation_dir, documentation)
       end
 
-      # Allow users to download the RAML, which may be modified since it was read
-      raml_download_path = @site.config.fetch('raml_download_path', 'api.raml').split('/')
-      raml_download_path.insert(0, @web_root)
-      raml_download_filename = raml_download_path.delete_at(-1)
-      raml_download_path = raml_download_path.join('/') + '/'
+      # Allow users to download descriptor as RAML and JSON, which may be modified since it was read
+      download_basename = @site.config.fetch('ramler_downloadable_descriptor_basenames', {}).fetch(raml_path, 'api') 
+      raml_download_filename = download_basename + '.raml'
+      json_download_filename = download_basename + '.json'
 
       raml_yaml = raml_hash.to_yaml
       raml_yaml.sub!('---', '#%RAML 0.8')
-      @site.static_files << RawFile.new(@site, @site.source, raml_download_path, raml_download_filename, raml_yaml)
+      @site.static_files << RawFile.new(@site, @site.source, @web_root, raml_download_filename, raml_yaml)
+
+      raml_json = JSON.pretty_generate(raml_hash)
+      @site.static_files << RawFile.new(@site, @site.source, @web_root, json_download_filename, raml_json) 
     end
 
     private
