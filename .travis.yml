@@ -7,3 +7,6 @@ install:
   - npm install raml-cop
   - bundle install
 script: "bundle exec rspec"
+branches:
+  only:
+    - master
