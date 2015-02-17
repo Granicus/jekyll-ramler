@@ -88,8 +88,35 @@ describe 'ReferencePageGenerator', fakefs:true do
       expect {@rpg.generate(@site)}.to raise_error 
     end
 
-    it 'defaults to "resource", "overview", and "security" for generated folders'
-    it 'places generated content into folders based on ramler_generated_sub_dirs configuration mapping'
+    it 'defaults to "resource", "overview", and "security" for generated folders' do
+      @site.config['ramler_api_paths'].delete('/productA/api.json')
+      @site.config['ramler_api_paths'].delete('service.json')
+      @rpg.generate(@site)
+      @site.process
+
+      expect(File.directory?('_site/resource')).to be true
+      expect(File.directory?('_site/overview')).to be true
+      expect(File.directory?('_site/security')).to be true
+    end
+
+    it 'places generated content into folders based on ramler_generated_sub_dirs configuration mapping' do
+      @site.config['ramler_generated_sub_dirs'] = {
+        'resource' => 'endpoints',
+        'overview' => 'info',
+        'security' => 'auth'
+      }
+      @rpg.generate(@site)
+      @site.process
+
+      expect(File.directory?('_site/endpoints')).to be true
+      expect(File.directory?('_site/info')).to be true
+      expect(File.directory?('_site/auth')).to be true
+
+      expect(File.directory?('_site/productA/endpoints')).to be true
+      expect(File.directory?('_site/productA/info')).to be true
+      expect(File.directory?('_site/productA/auth')).to be true
+    end
+
     it 'names downloadable descriptors "api.raml" and "api.json" by default'
     it 'names downloadable descriptors based on ramler_downloadable_basename'
   end

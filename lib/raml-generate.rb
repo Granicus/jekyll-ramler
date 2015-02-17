@@ -230,13 +230,14 @@ module Jekyll
         generate_resource_pages(raml_hash['resources'])
       end
 
-      dir = Jekyll::get_dir('overview', @site.config) 
+      dir = Jekyll::get_dir('security', @site.config) 
       @securitySchemes.each do |scheme_name, scheme|
         scheme_dir = File.join(dir, scheme_name)
         scheme['title'] = scheme_name
         @site.pages << SecuritySchemePage.new(@site, @site.source, @web_root, scheme_dir, scheme) 
       end
 
+      dir = Jekyll::get_dir('overview', @site.config) 
       raml_hash.fetch('documentation', []).each do |documentation|
         documentation_dir = File.join(dir, documentation['title'])
         @site.pages << DocumentationPage.new(@site, @site.source, @web_root, documentation_dir, documentation)
