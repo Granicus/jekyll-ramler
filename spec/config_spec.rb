@@ -19,6 +19,7 @@ describe 'ReferencePageGenerator', fakefs:true do
 
     FileUtils.mkdir_p('_layouts')
     File.open('_layouts/default.html', 'w') { |f| f << "{{ content }}" }
+    File.open('_layouts/resource.html', 'w') { |f| f << "<h1>Resource</h1> <p>{{ content }}</p>" }
 
     File.open('api.json', 'w') do |f|
       f << JSON.pretty_generate(load_simple_raml)
@@ -140,6 +141,19 @@ describe 'ReferencePageGenerator', fakefs:true do
       expect(File.file?('_site/api.raml')).to be true
       expect(File.file?('_site/productA/productA_api.json')).to be true
       expect(File.file?('_site/productA/productA_api.raml')).to be true
+    end
+
+    it 'can use layouts configured for nested contexts' do
+      @site.config['defaults'] = [{
+        'scope' => {'path' => 'productA/resource'},
+        'values' => {'layout' => 'resource'}
+      }]
+      @site.config['ramler_api_paths'].delete('service.json')
+
+      @rpg.generate(@site)
+      @site.process
+      output = File.read('_site/productA/resource/test_resource/index.html')
+      expect(output).to include "<h1>Resource</h1>"
     end
   end
 end

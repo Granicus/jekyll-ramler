@@ -24,7 +24,7 @@ module Jekyll
       @dir = File.join(web_root, @dir)
       @name = 'index.html'
       
-      layout = get_layout(dir) if layout.nil?
+      layout = get_layout("#{web_root}#{dir}") if layout.nil?
       layout << '.html' if not layout.end_with?('.html')
 
       self.process(@name)
@@ -46,13 +46,13 @@ module Jekyll
       end
 
       def get_layout(dir, site=@site)
-        default = site.config.fetch('defaults', {}).detect do |default| 
-          default['scope']['path'] == dir.split('/').first
-        end
+        defaults = site.config.fetch('defaults', []).sort_by { |x| -(x.fetch('scope', {}).fetch('path', '').length) }
+
+        default = defaults.detect { |x| dir.include?(x['scope']['path'])}
 
         default = {"values" => {}} if default.nil?
 
-        default['values'].fetch('layout', 'default')
+        layout = default['values'].fetch('layout', 'default')
       end
 
   end
