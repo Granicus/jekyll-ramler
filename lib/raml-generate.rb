@@ -25,7 +25,7 @@ module Jekyll
       @name = 'index.html'
       
       layout = get_layout("#{web_root}#{dir}") if layout.nil?
-      layout << '.html' if not layout.end_with?('.html')
+      layout = "#{layout}.html" if not layout.end_with?('.html')
 
       self.process(@name)
       self.read_yaml(File.join(base, '_layouts'), layout)
