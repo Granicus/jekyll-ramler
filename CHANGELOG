@@ -1,0 +1,17 @@
+CHANGELOG
+==========
+
+This project does *not* adhere to Semantic Versioning
+
+## 0.0.5 - 2014-02-18 
+
+### Fixed
+
+- Security pages are back to using the layout defined for resource pages
+
+## 0.0.4 - 2014-02-18
+
+### Fixed
+
+- Fixed bug that changed the default layouts configured by a project's
+	_config.yml

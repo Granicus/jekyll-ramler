@@ -59,7 +59,7 @@ module Jekyll
 
   class SecuritySchemePage<GeneratedPage
     def initialize(site, base, web_root, dir, securityScheme)
-        super(site, base, web_root, dir, securityScheme, layout=get_layout('resource', site))
+        super(site, base, web_root, dir, securityScheme, layout=get_layout("#{web_root}resource", site))
     end
   end
 
