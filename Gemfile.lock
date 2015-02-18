@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll-ramler (0.0.2)
+    jekyll-ramler (0.0.4)
       jekyll
 
 GEM
