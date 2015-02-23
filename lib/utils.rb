@@ -42,7 +42,7 @@ module Jekyll
 
         if obj.include?('body')
           if obj['body'].fetch('application/x-www-form-urlencoded', {}).include?('formParameters')
-            if obj['body'].include?('application/json') && !(obj['body']['application/json'].include?('schema'))
+            if insert_json_schema?(obj)
               insert_json_schema(obj, generate_json_schema(obj))
             end
           end
@@ -54,6 +54,7 @@ module Jekyll
 
     # Inserts provided JSON Schema into obj['body']['application/json']['schema'] 
     def insert_json_schema(obj, schema)
+      obj['body']['application/json'] = {} if obj['body']['application/json'].nil?
       obj['body']['application/json']['schema'] = schema 
     end
 
@@ -87,6 +88,13 @@ module Jekyll
       schema_hash['required'] = required_properties if not required_properties.empty?
       
       JSON.pretty_generate(schema_hash)
+    end
+
+    def insert_json_schema?(obj)
+      return false if !obj['body'].include?('application/json')
+      json_hash = obj['body']['application/json']
+      json_hash = {} if json_hash.nil?
+      !(json_hash.include?('schema'))
     end
   end
 

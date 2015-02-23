@@ -3,13 +3,20 @@ CHANGELOG
 
 This project does *not* adhere to Semantic Versioning
 
-## 0.0.5 - 2014-02-18 
+## 0.0.6 - 2015-02-23
+
+### Fixed
+
+- JSON Schema is now generated based on RAML if application/json is present
+	and nil
+
+## 0.0.5 - 2015-02-18 
 
 ### Fixed
 
 - Security pages are back to using the layout defined for resource pages
 
-## 0.0.4 - 2014-02-18
+## 0.0.4 - 2015-02-18
 
 ### Fixed
 

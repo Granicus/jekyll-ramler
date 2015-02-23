@@ -38,6 +38,32 @@ describe 'Utils' do
       end
     end
 
+    context '.insert_json_schema?' do
+      it 'returns true if application/json does not contain "schema"' do
+        method = @raml_hash['resources']['/test_resource']['post']
+        method['body']['application/json'] = {}
+        expect(@rsg.insert_json_schema?(method)).to be true
+      end
+
+      it 'returns true if application/json is nil' do
+        method = @raml_hash['resources']['/test_resource']['post']
+        method['body']['application/json'] = nil
+        expect(@rsg.insert_json_schema?(method)).to be true
+      end
+
+      it 'returns false if there is no application/json' do
+        method = @raml_hash['resources']['/test_resource']['post']
+        method['body'].delete('application/json')
+        expect(@rsg.insert_json_schema?(method)).to be false 
+      end
+
+      it 'returns false if application/json contains "schema"' do
+        method = @raml_hash['resources']['/test_resource']['post']
+        method['body']['application/json'] = {"schema" => "{A Schema!}"}
+        expect(@rsg.insert_json_schema?(method)).to be false
+      end
+    end
+
     context '.insert_json_schema' do
       it 'inserts an appropriate string into application/json:schema' do
         @raml_hash['resources']['/test_resource']['post']['body']['application/json'] = {}
@@ -54,6 +80,19 @@ describe 'Utils' do
 
       it 'throws an error if provided object does not have expected properties' do
         expect{@rsg.insert_json_schema(@raml_hash, 'foobar')}.to raise_error
+      end
+
+      it 'elegantly handles a nil application/json and inserts an appropriate string into application/json:schema' do
+        @raml_hash['resources']['/test_resource']['post']['body']['application/json'] = nil
+        orig_raml_hash = DeepClone.clone @raml_hash
+
+        json_schema = @rsg.generate_json_schema(@raml_hash['resources']['/test_resource']['post'])
+        @rsg.insert_json_schema(@raml_hash['resources']['/test_resource']['post'], json_schema)
+
+        expect(@raml_hash['resources']['/test_resource']['post']['body']['application/json']).to include('schema')
+        expect(@raml_hash['resources']['/test_resource']['post']['body']['application/json']['schema']).to eq(json_schema)
+        @raml_hash['resources']['/test_resource']['post']['body']['application/json'] = nil
+        expect(@raml_hash).to eq(orig_raml_hash)
       end
     end
 
