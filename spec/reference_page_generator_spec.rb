@@ -61,12 +61,15 @@ describe 'ReferencePageGenerator', fakefs:true do
       expect(test_doc.data['body']).to match /<p>.*<\/p>\n\n<h1.*>.*<\/h1>\n\n<p>.*<\/p>/m
       expect(test_doc.data['body']).to include "<strong>Hello</strong>"
       
-      test_resource = @site.pages.select {|p| p.data['title'] == '/test_resource'}.first
-      test_post = test_resource.data['methods'].select {|r| r['method'] == 'post' }.first
-      test_post['body']['application/x-www-form-urlencoded']['formParameters'].each do |param|
-        expect(param[1]['description']).to match /<p>.*<\/p>/m
+      test_resources = @site.pages.select {|p| p.data['title'].start_with?('/')}
+      test_resources.each do |resource|
+        test_post = resource.data['methods'].select {|r| r['method'] == 'post' }.first
+        test_post['body']['application/x-www-form-urlencoded']['formParameters'].each do |param|
+          expect(param[1]['description']).to match /<p>.*<\/p>/m
+        end
       end
 
+      test_post = test_resources.select{ |p| p.data['title'] == '/test_resource'}.first.data['methods'].select {|r| r['method'] == 'post' }.first
       foo_desc = test_post['body']['application/x-www-form-urlencoded']['formParameters']['foo']['description']
       expect(foo_desc).to match /<strong>.*<\/strong>/m
     end
