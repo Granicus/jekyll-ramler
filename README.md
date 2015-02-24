@@ -7,6 +7,16 @@ jekyll-ramler
 Generates Jekyll pages for overview, security, and resource documentation 
 specificed in a RAML file.
 
+## Features
+
+- Renders RAML into multi-page HTML views - one page per endpoint
+- Supports rendering multiple RAML files into web pages
+- Transforms description fields found in RAML via Markdown
+- Auto-generation of JSON Schema based on existing formParamters of
+  application/x-www-form-urlencoded
+- Generation of complete RAML and JSON representations of API descriptors
+- Supports Raw and Table based displays of JSON Schema included in your RAMLs
+- Automatic insertion of inherited JSON Schema (via `$ref` and `allOf`)
 
 ## Installation
 
@@ -92,6 +102,25 @@ Several options can be defined by your project's _config.yml:
 
   Generated descriptor files will be placed in the web folder configured for a
   given source file.
+
+### Markdown no_intra_emphasis
+
+All description values found in a RAML file are transformed via Markdown, which
+allows underscores (_) to be used as deliminators for emphasis and bold 
+content. Default transformation behavior can lead to mis-transformed content, 
+especially for words that contain underscores, such as variable names. As such,
+it is recommended that you use the no_intra_emphasis extension of your choosen
+Markdown engine. This extension can be enabled for *Redcarpet* by adding the
+following to your _config.yml:
+
+```
+markdown: redcarpet
+redcarpet:
+  extensions: ["no_intra_emphasis"]
+```
+
+Refer to <http://jekyllrb.com/docs/configuration/#markdown-options> for more
+information on the use of no_intra_emphasis in Jekyll.
 
 
 ## JSON Schema Support
