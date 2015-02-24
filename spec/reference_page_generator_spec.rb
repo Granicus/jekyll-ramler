@@ -66,6 +66,9 @@ describe 'ReferencePageGenerator', fakefs:true do
       test_post['body']['application/x-www-form-urlencoded']['formParameters'].each do |param|
         expect(param[1]['description']).to match /<p>.*<\/p>/m
       end
+
+      foo_desc = test_post['body']['application/x-www-form-urlencoded']['formParameters']['foo']['description']
+      expect(foo_desc).to match /<strong>.*<\/strong>/m
     end
 
     it 'inserts trait properties into resources that have traits' do

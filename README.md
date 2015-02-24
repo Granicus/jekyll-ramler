@@ -122,6 +122,15 @@ redcarpet:
 Refer to <http://jekyllrb.com/docs/configuration/#markdown-options> for more
 information on the use of no_intra_emphasis in Jekyll.
 
+## Markdown Descriptions
+
+jekyll-ramler will transform any *description* value found in a RAML via
+Markdown. This includes description values on endpoints, methods, security 
+schemas, and in formParameters items. *body* values of `documentation` entires
+will also be transformed via Markdown.
+
+Note that in order to use Markdown in the description of a formParameter item,
+you will need to use the pipe syntax (|) to avoid a RAML validation error.
 
 ## JSON Schema Support
 
