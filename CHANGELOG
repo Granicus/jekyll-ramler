@@ -3,6 +3,15 @@ CHANGELOG
 
 This project does *not* adhere to Semantic Versioning
 
+## 0.0.8 - 2015-02-25
+
+### Fixed
+
+- Newlines are no longer removed in descriptions in JSON Schema, maintaining
+	ability to transform via Markdown
+- Fixed bug that could cause changes to JSON Schema to also appear in hash of
+	x-www-form-urlencoded formParameters
+
 ## 0.0.7 - 2015-02-25 
 
 ### Added

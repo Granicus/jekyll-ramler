@@ -7,5 +7,4 @@ group :test, :development do
   gem 'pry'
   gem 'rspec'
   gem 'rspec-mocks'
-  gem 'ruby_deep_clone'
 end

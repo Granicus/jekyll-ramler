@@ -1,4 +1,5 @@
 require 'json'
+require 'deep_clone'
 
 module Jekyll
   def self.get_dir(page_type, config)
@@ -6,11 +7,14 @@ module Jekyll
   end
 
   def self.sanatize_json_string(s)
-      strip_newlines(s)
+      # This use to do something. Hopefully someday it will do something again
+      # See strip_newlines
+      s
   end
 
   def self.strip_newlines(s)
     # Assuming Markdown, so do NOT remove consecutive newlines
+    # TODO Also do not remove newlines at end of list items
     regex = /([^\n])\n([^\n])/
     s.gsub(regex, '\1 \2').strip
   end
@@ -69,7 +73,7 @@ module Jekyll
       schema_hash['type'] = 'object'
 
       required_properties = []
-      schema_hash['properties'] = obj['body']['application/x-www-form-urlencoded']['formParameters'].dup
+      schema_hash['properties'] = DeepClone.clone obj['body']['application/x-www-form-urlencoded']['formParameters']
       schema_hash['properties'].each do |name, param|
         if param.include?('required')
           required_properties << name if param['required'] == true

@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'jekyll-ramler'
-  s.version     = '0.0.7'
+  s.version     = '0.0.8'
   s.date        = '2015-02-09'
   s.authors     = ['GovDelivery']
   s.email       = 'support@govdelivery.com'
@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
                      resource documentation specificed in a RAML file.}
 
   s.add_runtime_dependency  'jekyll'
+  s.add_runtime_dependency  'ruby_deep_clone'
 
   s.files       = `git ls-files`.split($\)
   s.require_paths = ['lib']
