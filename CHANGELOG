@@ -3,6 +3,17 @@ CHANGELOG
 
 This project does *not* adhere to Semantic Versioning
 
+## 0.0.7 - 2015-02-25 
+
+### Added
+
+- Documentation on features and configuration
+
+### Fixed
+
+- Descriptions in hashes of JSON Schema were not being transformed via
+	Markdown. This has been corrected.
+
 ## 0.0.6 - 2015-02-23
 
 ### Fixed

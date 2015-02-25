@@ -72,6 +72,9 @@ describe 'ReferencePageGenerator', fakefs:true do
       test_post = test_resources.select{ |p| p.data['title'] == '/test_resource'}.first.data['methods'].select {|r| r['method'] == 'post' }.first
       foo_desc = test_post['body']['application/x-www-form-urlencoded']['formParameters']['foo']['description']
       expect(foo_desc).to match /<strong>.*<\/strong>/m
+
+      schema_hash_foo_desc = test_post['body']['application/json']['schema_hash']['properties']['foo']['description']
+      expect(schema_hash_foo_desc).to match /<strong>.*<\/strong>/m
     end
 
     it 'inserts trait properties into resources that have traits' do

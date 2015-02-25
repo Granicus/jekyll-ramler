@@ -110,9 +110,14 @@ module Jekyll
       schema_generator = Jekyll::RamlSchemaGenerator.new(site, resource['title'])
       schema_generator.insert_schemas(resource['methods'])
 
+      # Support a better presentation of the schema
+      resource = add_schema_hashes(resource) 
+
       # Transform descriptions via Markdown
       resource = transform_resource_descriptions(resource)
-      self.data['methods'] = add_schema_hashes(resource['methods'])
+
+      # Make all this available to Liquid templates
+      self.data['methods'] = resource['methods']
     end
 
     private
