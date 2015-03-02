@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jekyll-ramler (0.0.8)
+    jekyll-ramler (0.0.9)
       jekyll
       ruby_deep_clone
 
