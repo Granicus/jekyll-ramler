@@ -30,11 +30,13 @@ def example_raml_hash
             'application/x-www-form-urlencoded' => {
               'formParameters' => {
                 'foo' => {
+                  'displayName' => 'foo',
                   'description' => 'Fooing',
                   'type' => 'string',
                   'example' => 'Foo'
                 },
                 'bar' => {
+                  'displayName' => 'bar',
                   'description' => 'A place to get a drink',
                   'type' => 'object'
                 }

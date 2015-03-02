@@ -3,6 +3,12 @@ CHANGELOG
 
 This project does *not* adhere to Semantic Versioning
 
+## 0.0.9 - 2015-03-02
+
+### Fixed
+
+- Generated JSON Schema no-longer include the displayName attribute from RAML
+
 ## 0.0.8 - 2015-02-25
 
 ### Fixed

@@ -17,6 +17,14 @@ describe 'Utils' do
         expect(json_schema['properties']).to eq(JSON.parse(simple_schema)['properties'])
       end
 
+      it 'creates a JSON Schema string that does not include unsupported RAML keywords' do
+        json_schema = JSON.parse(@rsg.generate_json_schema(@raml_hash['resources']['/test_resource']['post']) )
+        json_schema['properties'].each do |prop|
+          expect(prop).not_to include('repeat')
+          expect(prop).not_to include('displayName')
+        end
+      end
+
       it 'creates a JSON Schema with a required attribute if application/x-www-form-urlencoded:formParameters includes a required parameter' do
         @raml_hash['resources']['/test_resource']['post']['body']['application/x-www-form-urlencoded']['formParameters']['bar']['required'] = true
         json_schema = JSON.parse(@rsg.generate_json_schema(@raml_hash['resources']['/test_resource']['post']))

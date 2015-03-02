@@ -84,10 +84,9 @@ module Jekyll
           param['description'] = Jekyll::sanatize_json_string(param['description']) 
         end
 
-        # Repeat is not a supported keyword in JSON Schema 
-        if param.include?('repeat')
-          param.delete('repeat')
-        end
+        # Repeat and displayName are not supported keywords in JSON Schema
+        param.delete('repeat')
+        param.delete('displayName')
       end
       schema_hash['required'] = required_properties if not required_properties.empty?
       
