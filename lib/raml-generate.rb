@@ -171,9 +171,9 @@ module Jekyll
                     if param.include?('example') and ['object', 'array'].include?(param['type'])
                       param['example'] = JSON.pretty_generate(JSON.parse(param['example']))
                     elsif param.include?('properties')
-                      param['example'] = JSON.pretty_generate(param['properties'])
+                      param['properties'] = JSON.pretty_generate(param['properties'])
                     elsif param.include?('items')
-                      param['example'] = JSON.pretty_generate(param['items'])
+                      param['items'] = JSON.pretty_generate(param['items'])
                     end
 
                     obj['properties'][name] = param
