@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'jekyll-ramler'
-  s.version     = '0.0.11'
-  s.date        = '2015-02-09'
+  s.version     = '0.0.12'
+  s.date        = '2015-11-23'
   s.authors     = ['GovDelivery']
   s.email       = 'support@govdelivery.com'
   s.homepage    = 'https://github.com/govdelivery/jekyll-ramler'
