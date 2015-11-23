@@ -40,8 +40,8 @@ module Jekyll
       def transform_md(output)
         # Use the existing Jekyll Markdown converters
         md_converters = site.converters.select{|c| c.matches('.md')}
-        md_converters.reduce(output) do |output, converter|
-          converter.convert output 
+        md_converters.reduce(output) do |output_to_convert, converter|
+          converter.convert output_to_convert
         end
       end
 
@@ -52,14 +52,14 @@ module Jekyll
 
         default = {"values" => {}} if default.nil?
 
-        layout = default['values'].fetch('layout', 'default')
+        default['values'].fetch('layout', 'default')
       end
 
   end
 
   class SecuritySchemePage<GeneratedPage
     def initialize(site, base, web_root, dir, securityScheme)
-        super(site, base, web_root, dir, securityScheme, layout=get_layout("#{web_root}resource", site))
+        super(site, base, web_root, dir, securityScheme, get_layout("#{web_root}resource", site))
     end
   end
 
@@ -163,10 +163,10 @@ module Jekyll
               when 'application/json'
                 obj['schema_hash'] = JSON.parse(obj['schema'])
 
-                refactor_object = lambda do |obj|
-                  obj['properties'].each do |name, param|
+                refactor_object = lambda do |lam_obj|
+                  lam_obj['properties'].each do |name, param|
                     param['displayName'] = name
-                    param['required'] = true if obj.fetch('required', []).include?(name)
+                    param['required'] = true if lam_obj.fetch('required', []).include?(name)
 
                     if param.include?('example') and ['object', 'array'].include?(param['type'])
                       param['example'] = JSON.pretty_generate(JSON.parse(param['example']))
@@ -176,9 +176,9 @@ module Jekyll
                       param['items'] = JSON.pretty_generate(param['items'])
                     end
 
-                    obj['properties'][name] = param
+                    lam_obj['properties'][name] = param
                   end
-                  obj
+                  lam_obj
                 end
 
                 if obj['schema_hash'].include?('properties')
@@ -248,7 +248,37 @@ module Jekyll
         @site.pages << DocumentationPage.new(@site, @site.source, @web_root, documentation_dir, documentation)
       end
 
+      generate_downloadable_descriptors(raml_hash, raml_path)
+    end
+
+    private
+    def generate_resource_pages(resources, parent_dir=nil)
+
+      if parent_dir
+        dir = parent_dir
+      else 
+        dir = Jekyll::get_dir('resource', @site.config)
+      end
+
+      resources.each do |resource|
+        resource_name = resource["relativeUri"]
+        resource_dir = File.join(dir, resource_name)
+        @site.pages << ResourcePage.new(@site, @site.source, @web_root, resource_dir, resource, @traits, @securitySchemes)
+        generate_resource_pages(resource['resources'], resource_dir) if resource.has_key?('resources')
+      end
+    end
+
+    def generate_downloadable_descriptors(raml_hash, raml_path)
       # Allow users to download descriptor as RAML and JSON, which may be modified since it was read
+      raml_hash = DeepClone.clone raml_hash 
+
+      # Get rid of 'title' attribute added to security schemes
+      # securitySchemes will be an array of hashes containing one key (Name) value (a hash of properties) pairing
+      raml_hash.fetch('securitySchemes', []).each {|el| el.each_value { |scheme| scheme.delete('title') }}
+
+      # replace "resources" with the associated "relativeUri" of each resource
+      fix_resources(raml_hash)
+
       download_basename = @site.config.fetch('ramler_downloadable_descriptor_basenames', {}).fetch(raml_path, 'api') 
       raml_download_filename = download_basename + '.raml'
       json_download_filename = download_basename + '.json'
@@ -261,24 +291,27 @@ module Jekyll
       @site.static_files << RawFile.new(@site, @site.source, @web_root, json_download_filename, raml_json) 
     end
 
-    private
-      def generate_resource_pages(resources, parent_dir=nil)
-
-        if parent_dir
-          dir = parent_dir
-        else 
-          dir = Jekyll::get_dir('resource', @site.config)
-        end
-
-        resources.each do |resource|
-          resource_name = resource["relativeUri"]
-          resource_dir = File.join(dir, resource_name)
-          @site.pages << ResourcePage.new(@site, @site.source, @web_root, resource_dir, resource, @traits, @securitySchemes)
-          if resource.has_key?('resources')
-            generate_resource_pages(resource['resources'], resource_dir)
-        end
-
+    def fix_resources(raml_hash) 
+      # DFS FTW
+      raml_hash.fetch('resources', []).each do |resource_hash|
+        raml_hash[resource_hash.delete('relativeUri')] = resource_hash
+        fix_resources(resource_hash)
       end
+
+      raml_hash.fetch('methods', []).each do |method_hash|
+        raml_hash[method_hash.delete('method')] = method_hash
+        fix_body(method_hash)
+      end
+      raml_hash.delete('methods')
+      raml_hash.delete('schema_hash') 
+      raml_hash.delete('relativeUriPathSegments')
+      raml_hash.delete('resources')
+      raml_hash
+    end
+
+    def fix_body(method_hash)
+        method_hash.fetch('body', {}).each {|content_type, definition| definition.delete('schema_hash')} 
+        method_hash.fetch('responses', {}).each {|response_code, response_hash| fix_body(response_hash) if response_hash}
     end
   end
 end
