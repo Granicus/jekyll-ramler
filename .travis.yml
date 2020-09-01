@@ -1,10 +1,12 @@
 language: ruby
 rvm:
-  - 1.9.3-p547
-  - 2.1.5
-  - 2.2.0
+  - 2.3.5
+  - 2.4.10
+  - 2.5.8
+  - 2.6.6
+  - 2.7.1
 install:
-  - npm install raml-cop
+  - npm install raml-cop@^1.1.0
   - bundle install
 script: "bundle exec rspec"
 branches:
