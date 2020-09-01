@@ -19,7 +19,7 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
     eventmachine (1.2.7)
-    fakefs (1.2.2)
+    fakefs (1.2.1)
     ffi (1.13.1)
     forwardable-extended (2.6.0)
     http_parser.rb (0.6.0)
@@ -90,7 +90,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  fakefs
+  fakefs (= 1.2.1)
   jekyll-ramler!
   pry
   rspec

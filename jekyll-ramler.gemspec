@@ -10,6 +10,8 @@ Gem::Specification.new do |s|
   s.description = %q{Generates Jekyll pages for overview, security, and 
                      resource documentation specificed in a RAML file.}
 
+  s.required_ruby_version = '>= 2.3.0'
+
   s.add_runtime_dependency  'jekyll', '~> 3.9.0'
   s.add_runtime_dependency  'kramdown-parser-gfm', '~> 1.1.0'
   s.add_runtime_dependency  'ruby_deep_clone'
