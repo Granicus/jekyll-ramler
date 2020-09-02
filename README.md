@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/govdelivery/jekyll-ramler.svg?branch=master)](https://travis-ci.org/govdelivery/jekyll-ramler)
+[![Build Status](https://travis-ci.com/Granicus/jekyll-ramler.svg?branch=master)](https://travis-ci.com/Granicus/jekyll-ramler)
 [![Gem Version](https://badge.fury.io/rb/jekyll-ramler.svg)](http://badge.fury.io/rb/jekyll-ramler)
 
 jekyll-ramler
